@@ -54,6 +54,6 @@ The online version of this course is licensed under the [Creative Commons Attrib
 
 ---
 
-### [NICAR 2018 sessions](https://github.com/andrewbtran/NICAR-2019-mapping)
+### [NICAR 2019 sessions](https://github.com/andrewbtran/NICAR-2019-mapping)
 ### [NICAR 2018 sessions](https://andrewbtran.github.io/NICAR/2018/)
 ### [NICAR 2017 sessions](https://andrewbtran.github.io/NICAR/2017/)

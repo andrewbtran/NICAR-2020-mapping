@@ -95,7 +95,10 @@ points %>% mutate(n_points = map_int(geometry, nrow))
 
 m <- grDevices::colorRamp(c("aquamarine2", "dodgerblue2", "orange", "gray", "firebrick3"))(1:256/256)
 
-mapdeck(token = mb_key, style = 'mapbox://styles/mapbox/dark-v9') %>% 
+mapdeck(token = mb_key, 
+        style = 'mapbox://styles/mapbox/dark-v9',
+        zoom = 6,
+        location = c(-92.394604, 31.091401)) %>% 
   add_scatterplot(
     data=points,
     radius=1,
@@ -103,7 +106,7 @@ mapdeck(token = mb_key, style = 'mapbox://styles/mapbox/dark-v9') %>%
     fill_colour = "race",
     palette = m,
     layer_id = "scatter_layer",
-    update_view= TRUE,
+    update_view= FALSE,
     #, tooltip = "race"
     legend=T
   )

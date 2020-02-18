@@ -10,7 +10,7 @@ if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
 }
 
 if (!"usgazetteer" %in% rownames(installed.packages())) {
-  devtools::install_git('bhaskarvk/usgazetteer')
+  devtools::install_github('bhaskarvk/usgazetteer')
 }
 
 library(devtools)
