@@ -1,0 +1,112 @@
+---
+title: "Crosstalk 3"
+author: "NICAR 2020"
+date: "3/5/2020"
+output:
+  flexdashboard::flex_dashboard:
+    theme: paper
+    source_code: embed
+---
+
+```{r setup, include=FALSE}
+# setting up R Markdown options
+
+# We want to hide the code and only see the results
+knitr::opts_chunk$set(echo = F)
+
+# We don't want to see any warnings from our code
+knitr::opts_chunk$set(warning = F)
+
+# We don't want to see any messages
+knitr::opts_chunk$set(message = F)
+```
+
+```{r install_packages}
+# You must have the flexdashboard package installed
+# Before knitting this R Markdown file
+# install.packages("flexdashboard")
+
+# This function checks if you don't have the correct packages installed yet
+# If not, it will install it for you
+packages <- c("tidyverse", "flexdashboard",
+              "crosstalk", "leaflet", "DT")
+
+if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(packages, rownames(installed.packages())), repos = "http://cran.us.r-project.org")  
+}
+library(tidyverse)
+library(flexdashboard)
+library(crosstalk)  
+library(leaflet)   
+library(DT)   
+```
+
+```{r load_and_clean_data}
+# This example focuses on Louisiana
+# Come back to this later if you want 
+# to change the state we're visualizing
+# NOTE: You'll need to change the starting
+# latitude and longitude of the map code below
+
+state <- read_csv("data/all_pharmacies_summarized.csv") %>% 
+  filter(BUYER_STATE=="LA") %>% 
+  select(-BUYER_ADDL_CO_INFO, -BUYER_ADDRESS2) %>% 
+  arrange(per_person)
+
+st <- SharedData$new(state)
+```
+
+Opioids in State {data-icon="ion-stats-bars"}
+=====================================  
+
+Column {data-width=200}
+-------------------------------------
+
+### Filters
+
+```{r filter_section}
+filter_select(
+  id = "BUYER_COUNTY",
+  label = "County",
+  sharedData = st,
+  group = ~BUYER_COUNTY
+)
+bscols(
+  filter_checkbox(
+    id = "BUYER_BUS_ACT",
+    label = "Pharmacy type",
+    sharedData = st,
+    group = ~BUYER_BUS_ACT
+  )
+)
+bscols(
+  filter_slider(
+    id = "per_person",
+    label = "Pills per resident",
+    sharedData = st,
+    column = ~per_person,
+    step = 10,
+    round = TRUE,
+    sep = "",
+    ticks = FALSE
+  )
+)
+
+```
+
+
+Column {data-width=800}
+-------------------------------------
+
+### Datatable
+
+```{r filterable_table}
+datatable(st)
+```
+
+
+### Interactive map
+
+```{r interactive_map}
+print("Interactive map goes here")
+```
