@@ -92,8 +92,19 @@ points %>% mutate(n_points = map_int(geometry, nrow))
 #### Dot density map time ----
 
 # setting up a color palette
-
 m <- grDevices::colorRamp(c("aquamarine2", "dodgerblue2", "orange", "gray", "firebrick3"))(1:256/256)
+
+# reordering the dataframe so the most populous is drawn on the map first
+points <- points %>% 
+  mutate(order=case_when(
+    race=="White" ~ 1,
+    race=="Black" ~ 2,
+    race=="Asian" ~ 3,
+    race=="Native" ~ 4,
+    race=="Other" ~ 5,
+    TRUE ~ 6
+  )) %>% 
+  arrange(order)
 
 mapdeck(token = mb_key, 
         style = 'mapbox://styles/mapbox/dark-v9',

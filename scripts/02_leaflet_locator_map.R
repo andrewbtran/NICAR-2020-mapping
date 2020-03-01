@@ -59,7 +59,7 @@ m <- leaflet(pharm_state) %>%
                    popup=paste0(pharm_state$BUYER_NAME, "<br />",
                                 pharm_state$per_person, " pills per person per year"),
                    weight = 3,
-                   radius=pharm_state$per_person, 
+                   radius=sqrt(pharm_state$per_person)*3, 
                    color="#ffa500", 
                    stroke = FALSE, 
                    fillOpacity = 0.3) 
@@ -80,7 +80,7 @@ m <- leaflet(pharm_state) %>%
                    popup=paste0(pharm_state$BUYER_NAME, "<br />",
                                 pharm_state$per_person, " pills per person per year"),
                    weight = 3,
-                   radius=pharm_state$per_person, 
+                   radius=sqrt(pharm_state$per_person)*3, 
                    stroke = FALSE, 
                    fillOpacity = 0.3,
                    # this line below is really the only thing that's different
@@ -96,7 +96,7 @@ m <- leaflet(pharm_state)  %>%
                    popup=paste0(pharm_state$BUYER_NAME, "<br />",
                                 pharm_state$per_person, " pills per person per year"),
                    weight = 3,
-                   radius=pharm_state$per_person, 
+                   radius=sqrt(pharm_state$per_person)*3, 
                    stroke = FALSE, 
                    fillOpacity = 0.3,
                    color=~cof(BUYER_BUS_ACT))   %>%
@@ -107,6 +107,54 @@ m <- leaflet(pharm_state)  %>%
             title="Pharmacy type") 
 
 m
+
+
+#### Add circles to the legend -----
+
+# set legend features
+colors <- c("gray", "gray", "gray", "#ffa500", "#13ED3F")
+labels <- c("5 pills", "15 pills", "30 pills", "Chain", "Retail")
+sizes <- c(sqrt(5)*3, sqrt(15)*3, sqrt(30)*3, 15, 15)
+shapes <- c("circle", "circle", "circle", "square", "square")
+borders <- c("gray", "gray", "gray", "#ffa500", "#13ED3F")
+
+addLegendCustom <- function(map, colors, labels, sizes, shapes, borders, opacity = 0.5){
+  
+  make_shapes <- function(colors, sizes, borders, shapes) {
+    shapes <- gsub("circle", "50%", shapes)
+    shapes <- gsub("square", "0%", shapes)
+    paste0(colors, "; width:", sizes, "px; height:", sizes, "px; border:3px solid ", borders, "; border-radius:", shapes)
+  }
+  make_labels <- function(sizes, labels) {
+    paste0("<div style='float: right; display: inline-block;height: ", 
+           sizes, "px;margin-top: 4px;line-height: ", 
+           sizes, "px;'>", labels, "</div>")
+  }
+  legend_colors <- make_shapes(colors, sizes, borders, shapes)
+  legend_labels <- make_labels(sizes, labels)
+  
+  return(addLegend(map, colors = legend_colors, labels = legend_labels, opacity = opacity))
+}
+
+## okay, back to our map code but replacing the addLegend() function
+## with our new addCustomLegend() function
+
+m <- leaflet(pharm_state)  %>% 
+  addProviderTiles(providers$CartoDB.DarkMatter) %>% 
+  setView(-92.469698, 31.012156, zoom = 7) %>% 
+  addCircleMarkers(~lon, ~lat,
+                   popup=paste0(pharm_state$BUYER_NAME, "<br />",
+                                pharm_state$per_person, " pills per person per year"),
+                   weight = 3,
+                   radius=sqrt(pharm_state$per_person)*3, 
+                   stroke = FALSE, 
+                   fillOpacity = 0.3,
+                   color=~cof(BUYER_BUS_ACT))   %>%
+  # this line below is really the only thing that's different
+  addLegendCustom(colors, labels, sizes, shapes, borders)
+
+m
+
 
 #### But more dots... ---------------
 

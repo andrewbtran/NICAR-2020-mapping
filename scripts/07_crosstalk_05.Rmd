@@ -159,7 +159,7 @@ st %>%
                     state$per_person, " average pills per person<br />
                     <img src='http://www.andrewbatran.com/nicar/la_minicharts/plot_",
                     state$BUYER_DEA_NO, ".png' width=200px height=150px/>"),
-    radius=state$per_person*500,
+    radius=sqrt(state$per_person)*1000,
     stroke=FALSE,
     opacity=.5
     )

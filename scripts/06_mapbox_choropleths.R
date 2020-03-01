@@ -111,9 +111,12 @@ mapdeck(token = mb_key, style = mapdeck_style("light"),
         location=c(-92.485530,31.335469)) %>% 
   add_hexagon(
     data=la_pharmacies,
+    radius=4000,
     update_view= FALSE,
+    legend = TRUE,
+    legend_options=list(title="Pharmacies"),
     #elevation_scale = 100,
-    colour_range = colourvalues::colour_values(1:6, palette = colourvalues::get_palette("viridis")[70:256,])
+    colour_range = colourvalues::colour_values(6:1, palette = colourvalues::get_palette("viridis")[70:256,])
   )
 
 #### Square grid map -------------
@@ -126,7 +129,7 @@ mapdeck(token = mb_key, style = mapdeck_style("light"),
     update_view= FALSE,
     cell_size = 10,
     opacity=.5,
-    colour_range = colourvalues::colour_values(1:6, palette = colourvalues::get_palette("viridis")[70:256,])
+    colour_range = colourvalues::colour_values(6:1, palette = colourvalues::get_palette("viridis")[70:256,])
   )
 
 #### Add labels ----------------
@@ -143,7 +146,7 @@ mapdeck(token = mb_key, style = mapdeck_style("light"),
     data=la_pharmacies,
     cell_size = 10,
     opacity=.5,
-    colour_range = colourvalues::colour_values(1:6, 
+    colour_range = colourvalues::colour_values(6:1, 
                                                palette = colourvalues::get_palette("viridis")[70:256,])
   ) %>% 
   add_text(
