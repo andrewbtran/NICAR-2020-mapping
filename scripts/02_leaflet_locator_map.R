@@ -28,6 +28,8 @@ m <- leaflet() %>%
 
 m 
 
+
+
 #### Multiple locations from a csv --------------
 
 library(readr)
@@ -41,6 +43,21 @@ glimpse(pharmacies)
 
 pharm_state <- pharmacies %>% 
   filter(BUYER_STATE=="LA")
+
+
+m <- leaflet(pharm_state) %>% 
+  addProviderTiles(providers$CartoDB.DarkMatter) %>% 
+  setView(-92.469698, 31.012156, zoom = 7) %>% 
+  addCircleMarkers(~lon, ~lat, 
+                   popup=paste0(pharm_state$BUYER_NAME, "<br />",
+                                pharm_state$per_person, " pills per person per year"),
+                   weight = 3,
+                   radius= 3, 
+                   color="#ffa500", 
+                   stroke = FALSE, 
+                   fillOpacity = 0.3) 
+m
+
 
 #### Adjust size of circles based on data -------
 
