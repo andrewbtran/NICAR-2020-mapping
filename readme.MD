@@ -1,6 +1,8 @@
 ## Making interactive maps with R - NICAR 2020
 
-These files and folders are meant to accompany the hands-on [Making interactive maps with R](https://ireapps.github.io/nicar-2020-schedule#20200306_making_interactive_maps_with_r_2130_all) at 2020 NICAR in New Orleans. There's also a website walkthrough for folks who want to revisit what they learned in person and for those who couldn't attend.
+These files and folders are meant to accompany the hands-on [Making interactive maps with R](https://ireapps.github.io/nicar-2020-schedule#20200306_making_interactive_maps_with_r_2130_all) at 2020 NICAR in New Orleans. There's also a [website walkthrough](https://nicar.r-journalism.com/docs/) for folks who want to revisit what they learned in person and for those who couldn't attend.
+
+* **[The Walkthroughs](https://nicar.r-journalism.com/docs/)**
 
 ### Downloading this Repo via R
 
