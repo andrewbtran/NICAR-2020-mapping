@@ -1,0 +1,163 @@
+---
+title: "Waffle House Index"
+author: "NICAR 2020"
+date: "3/6/2020"
+output:
+  flexdashboard::flex_dashboard:
+    theme: paper
+    source_code: embed
+---
+
+
+```{r setup, include=FALSE}
+# setting up R Markdown options
+
+# We want to hide the code and only see the results
+knitr::opts_chunk$set(echo = F)
+
+# We don't want to see any warnings from our code
+knitr::opts_chunk$set(warning = F)
+
+# We don't want to see any messages
+knitr::opts_chunk$set(message = F)
+```
+
+```{r install_packages}
+# You must have the flexdashboard package installed
+# Before knitting this R Markdown file
+# install.packages("flexdashboard")
+
+# This function checks if you don't have the correct packages installed yet
+# If not, it will install it for you
+packages <- c("tidyverse", "flexdashboard",
+              "crosstalk", "leaflet", "DT")
+
+if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(packages, rownames(installed.packages())), repos = "http://cran.us.r-project.org")  
+}
+library(tidyverse)
+library(flexdashboard)
+library(crosstalk)  
+library(leaflet)   
+library(DT) 
+```
+
+```{r load_and_clean_data}
+sheet <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRrObtIYokP-AywK_A33uF2phYvbBhi-lZxNndqngrB9U2srj_1iWBlLdUWBKisjlUIAqZSSeEr1VXy/pub?output=csv")
+
+
+st <- SharedData$new(sheet)
+```
+
+Waffle House Index {data-icon="ion-stats-bars"}
+=====================================  
+
+Column {data-width=200}
+-------------------------------------
+
+### Filters
+
+```{r filter_section}
+# What filters would you like to set up?
+# Look at line 68 in 07_crosstalk_05.Rmd for ideas
+
+filter_select(
+  id = "province",
+  label = "State",
+  sharedData = st,
+  group = ~province
+)
+bscols(
+  filter_checkbox(
+    id = "status",
+    label = "Index",
+    sharedData = st,
+    group = ~status
+  )
+)
+
+```
+
+
+Column {data-width=800}
+-------------------------------------
+
+
+### Interactive map
+
+```{r interactive_map}
+# map! You'll have to use the custom crosstalk object but
+# you can recycle your options from 02_your_turn.R
+# Also check out line 152 in 07_crosstalk_05.Rmd
+
+pall <- colorFactor(c("#e41a1c", "#4daf4a" , "#ffff00","#ffa500"), domain=c("Closed", "Full menu", "Limited menu", "Unknown"))
+
+ 
+st %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.DarkMatter) %>% 
+  setView(-89.437884, 29.997601, zoom = 7) %>% 
+  addCircleMarkers(~lon, ~lat, 
+                   popup=paste0(sheet$addressLine1, "<br />",
+                                sheet$city, ", ", 
+                                str_to_title(sheet$province)),
+                   weight = 3,
+                   radius=3, 
+                   stroke = FALSE, 
+                   fillOpacity = 0.8,
+                   color=~pall(status)) %>% 
+  addLegend("bottomright", 
+            colors= c("#e41a1c", "#ffff00", "#ffa500", "#4daf4a"), 
+            labels= c("Closed", "Limited menu", "Unknown", "Full menu"), 
+            title="Waffle House Index") 
+
+```
+
+### Datatable
+
+```{r filterable_table}
+# Customize how you want the datatable to look
+# Line 104 for context
+
+st %>% 
+  #select(contacted, status, addressLine1, city, province, phoneNumber) %>% 
+  DT::datatable(
+    filter = "top",  # allows filtering on each column
+    extensions = c(
+      "Buttons",  # add download buttons, etc
+      "Scroller"  # for scrolling down the rows rather than pagination
+    ),
+    rownames = FALSE,  # remove rownames
+    style = "bootstrap",
+    class = "compact",
+    width = "100%",
+    options = list(
+      dom = "Blrtip",  # specify content (search box, etc)
+      deferRender = TRUE,
+      scrollY = 300,
+      scroller = TRUE,
+      columnDefs = list(
+        list(
+          visible = FALSE,
+          targets = c(0, 3,4,5,6,7,9,13,14,16,17, 18:35)
+        )
+      ), 
+      buttons = list(
+        I("colvis"),  # turn columns on and off
+        "csv",  # download as .csv
+        "excel"  # download as .xlsx
+      )
+    ),
+    colnames = c(
+      "Contacted" = "contacted",
+      "Status" = "status",
+      "Address" = "addressLine1",
+      "City" = "city",
+      "State" = "province",
+      "Zip" = "postalCode",
+      "Phone" = "phoneLabel"
+    )
+    
+  )
+```
+
